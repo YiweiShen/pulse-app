@@ -5,7 +5,7 @@ import './App.css'
 
 function App() {
   useEffect(() => {
-    invoke('init')
+    invoke('init_menubar_panel')
   }, [])
 
   return (
