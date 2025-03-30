@@ -7,7 +7,5 @@ export default defineConfig({
     'src-tauri/tauri.conf.json',
     'src-tauri/Cargo.toml'
   ],
-  commit: true,
-  tag: true,
-  push: true
+  all: true
 })

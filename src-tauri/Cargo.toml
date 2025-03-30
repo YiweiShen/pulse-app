@@ -1,6 +1,6 @@
 [package]
 name = "pulse"
-version = "0.1.3"
+version = "0.1.4"
 description = "A lightweight menubar app that quietly checks the email inbox for you."
 authors = ["https://github.com/YiweiShen/"]
 edition = "2021"
