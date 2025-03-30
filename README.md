@@ -17,7 +17,7 @@ brew tap yiweishen/tap
 brew install pulse-app
 ```
 
-### Development
+### 🛠️ Development
 
 To run the app locally, you need to have [Rust](https://www.rust-lang.org/tools/install) and [Node.js](https://nodejs.org/en/download/) installed. Then, clone the repository and run the following commands:
 
@@ -26,7 +26,7 @@ npm install
 npm run tauri dev
 ```
 
-### Build
+### 🚀 Build
 
 To build the app for production, run the following command:
 
