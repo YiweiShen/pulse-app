@@ -4,9 +4,9 @@
 mod app_utils;
 mod command;
 mod panel_appearance;
+mod panel_configuraion;
 mod panel_listeners;
 mod panel_positioning;
-mod panel_swizzle;
 mod tray;
 mod workspace_listener;
 
