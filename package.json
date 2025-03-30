@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "package": "tauri build --bundles app",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "release": "npx bump"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",
