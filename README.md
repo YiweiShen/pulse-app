@@ -6,7 +6,7 @@
 
 # 📩 Pulse
 
-A lightweight Mac menubar app that quietly checks the email inbox for you.
+A minimalist macOS menubar app for email notifications.
 
 ### 🍺 Install with Homebrew
 

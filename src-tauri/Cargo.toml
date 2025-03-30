@@ -1,7 +1,7 @@
 [package]
 name = "pulse"
 version = "0.1.6"
-description = "A lightweight Mac menubar app that quietly checks the email inbox for you."
+description = "A minimalist macOS menubar app for email notifications."
 authors = ["https://github.com/YiweiShen/"]
 edition = "2021"
 
