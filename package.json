@@ -1,14 +1,14 @@
 {
   "name": "pulse",
   "private": true,
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "package": "tauri build --bundles app",
     "tauri": "tauri",
-    "release": "npx bump"
+    "release": "npx bumpp"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",
