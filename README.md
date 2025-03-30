@@ -13,8 +13,7 @@ A lightweight menubar app that quietly checks the email inbox for you.
 Run the following command:
 
 ```bash
-brew tap yiweishen/tap
-brew install pulse-app
+brew install yiweishen/tap/pulse
 ```
 
 ### 🛠️ Development
