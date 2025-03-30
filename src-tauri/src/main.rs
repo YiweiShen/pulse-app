@@ -18,7 +18,8 @@ fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             command::init_menubar_panel,
-            command::show_menubar_panel
+            command::show_menubar_panel,
+            command::exit_app,
         ])
         .plugin(tauri_nspanel::init())
         .setup(setup_app)
