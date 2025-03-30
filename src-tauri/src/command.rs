@@ -2,8 +2,8 @@ use std::sync::Once;
 use tauri_nspanel::ManagerExt;
 
 use crate::panel_appearance::update_menubar_appearance;
+use crate::panel_configuraion::configure_menubar_panel;
 use crate::panel_listeners::setup_menubar_panel_listeners;
-use crate::panel_swizzle::swizzle_to_menubar_panel;
 
 // Initialize the menubar panel only once.
 static MENUBAR_PANEL_INIT: Once = Once::new();
@@ -19,7 +19,7 @@ const MENUBAR_PANEL_LABEL: &str = "main";
 #[tauri::command]
 pub fn init_menubar_panel(app_handle: tauri::AppHandle) {
     MENUBAR_PANEL_INIT.call_once(move || {
-        swizzle_to_menubar_panel(&app_handle);
+        configure_menubar_panel(&app_handle);
         update_menubar_appearance(&app_handle);
         setup_menubar_panel_listeners(&app_handle);
     });
