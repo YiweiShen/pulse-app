@@ -4,9 +4,9 @@
   "version": "0.1.0",
   "identifier": "com.yiweishen.pulse.app",
   "build": {
-    "beforeDevCommand": "npm run dev:vite",
+    "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:5173",
-    "beforeBuildCommand": "npm run build:vite",
+    "beforeBuildCommand": "npm run build",
     "frontendDist": "../dist"
   },
   "app": {
