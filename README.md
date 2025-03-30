@@ -18,7 +18,7 @@ brew install yiweishen/tap/pulse
 
 ### 🛠️ Development
 
-To run the app locally, you need to have [Rust](https://www.rust-lang.org/tools/install) and [Node.js](https://nodejs.org/en/download/) installed. Then, clone the repository and run the following commands:
+To run the app locally, you need to have [Rust](https://www.rust-lang.org/tools/install) and [Node.js](https://nodejs.org/en/download/) installed. Clone the repository and run:
 
 ```bash
 npm install
@@ -35,7 +35,7 @@ npm run package
 
 ### 📦 Release
 
-To release a new version:
+To release a new version, make sure you don't have any uncommitted changes, and then:
 
 ```bash
 npm run release
