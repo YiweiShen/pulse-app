@@ -39,3 +39,12 @@ pub fn show_menubar_panel(app_handle: tauri::AppHandle) -> Result<(), String> {
         )),
     }
 }
+
+/// Exits the application immediately.
+///
+/// This function terminates the application by calling `std::process::exit(0)`.
+/// It is registered as a Tauri command, allowing it to be invoked from the frontend.
+#[tauri::command]
+pub fn exit_app() {
+    std::process::exit(0);
+}
