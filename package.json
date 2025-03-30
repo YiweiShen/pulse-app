@@ -7,14 +7,14 @@
     "dev:vite": "vite",
     "build:vite": "tsc && vite build",
     "dev": "tauri dev",
-    "package": "tauri build --target aarch64-apple-darwin"
+    "package": "tauri build --bundles app",
+    "tauri": "tauri"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-opener": "^2",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-icons": "^5.5.0"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2",
