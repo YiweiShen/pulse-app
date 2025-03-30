@@ -16,6 +16,14 @@ Run the following command:
 brew install yiweishen/tap/pulse
 ```
 
+### 🔐 Gmail Setup
+
+1. Go to Google Account - [App Passwords](https://myaccount.google.com/apppasswords).
+2. Follow the prompts to generate a unique password.
+3. Sign in the Pulse app with your Google account name and the generated password.
+
+Learn more: https://support.google.com/accounts/answer/185833?hl=en
+
 ### 🛠️ Development
 
 To run the app locally, you need to have [Rust](https://www.rust-lang.org/tools/install) and [Node.js](https://nodejs.org/en/download/) installed. Clone the repository and run:
