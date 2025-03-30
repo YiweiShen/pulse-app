@@ -1,7 +1,7 @@
 {
   "name": "pulse",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -20,6 +20,7 @@
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
+    "bumpp": "^10.1.0",
     "typescript": "~5.6.2",
     "vite": "^6.0.3"
   }
