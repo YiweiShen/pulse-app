@@ -35,13 +35,11 @@ npm run package
 
 ### 📦 Release
 
-To release a new version, manually bump the version in `src-tauri/Cargo.toml` and `tauri.conf.json`, then:
+To release a new version:
 
 ```bash
 npm run release
 ```
-
-This will auto update version in `package.json` and `package-lock.json`, and create a new git tag.
 
 ### ⚠️ Warning: WIP
 
