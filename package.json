@@ -1,14 +1,15 @@
 {
   "name": "pulse",
   "private": true,
-  "version": "0.1.4",
+  "version": "0.1.6",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "package": "tauri build --bundles app",
     "tauri": "tauri",
-    "release": "npx bumpp"
+    "release": "npx bumpp",
+    "release:before-commit": "npm install && cd src-tauri && cargo update"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",

@@ -7,5 +7,6 @@ export default defineConfig({
     'src-tauri/tauri.conf.json',
     'src-tauri/Cargo.toml'
   ],
-  all: true
+  all: true,
+  execute: 'npm run release:before-commit'
 })
