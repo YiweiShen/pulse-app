@@ -15,6 +15,7 @@
     {
       "identifier": "http:default",
       "allow": ["https://mail.google.com"]
-    }
+    },
+    "opener:default"
   ]
 }
