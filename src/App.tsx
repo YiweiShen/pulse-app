@@ -12,7 +12,7 @@ function App() {
   const { username, setUsername, password, updatePassword } = useAppConfig()
   const [newEmailCount, setNewEmailCount] = useState(0)
   const emailService = new EmailService()
-  const CHECK_INTERVAL = 600000 // 10 minutes in milliseconds
+  const CHECK_INTERVAL = 60000 // 1 min
   const GMAIL_INBOX_URL = 'https://mail.google.com/'
 
   useEffect(() => {
