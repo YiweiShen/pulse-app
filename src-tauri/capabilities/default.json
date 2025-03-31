@@ -2,9 +2,7 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
   "description": "Capability for the main window",
-  "windows": [
-    "main"
-  ],
+  "windows": ["main"],
   "permissions": [
     "core:event:default",
     "core:window:default",
@@ -12,6 +10,11 @@
     "core:resources:default",
     "core:menu:default",
     "core:tray:default",
-    "stronghold:default"
+    "stronghold:default",
+    "http:default",
+    {
+      "identifier": "http:default",
+      "allow": ["https://mail.google.com"]
+    }
   ]
 }
