@@ -4,6 +4,7 @@ use tauri_nspanel::ManagerExt;
 use crate::panel_appearance::update_menubar_appearance;
 use crate::panel_configuraion::configure_menubar_panel;
 use crate::panel_listeners::setup_menubar_panel_listeners;
+use crate::tray::{create, create_unread};
 
 // Initialize the menubar panel only once.
 static MENUBAR_PANEL_INIT: Once = Once::new();
@@ -47,4 +48,14 @@ pub fn show_menubar_panel(app_handle: tauri::AppHandle) -> Result<(), String> {
 #[tauri::command]
 pub fn exit_app() {
     std::process::exit(0);
+}
+
+#[tauri::command]
+pub fn change_icon_unread(app_handle: tauri::AppHandle) {
+    let _icon = create_unread(&app_handle);
+}
+
+#[tauri::command]
+pub fn change_icon_no_mail(app_handle: tauri::AppHandle) {
+    let _icon = create(&app_handle);
 }
