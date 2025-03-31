@@ -78,19 +78,21 @@ function App() {
         />
       ) : (
         <div className="main-content">
-          {username ? (
+          {
             <div className="button-container">
               {
                 <button onClick={openGmailInbox}>
-                  {newEmailCount} New Email{newEmailCount > 1 ? 's' : ''}
+                  {newEmailCount > 0
+                    ? `${newEmailCount} New Email${
+                        newEmailCount > 1 ? 's' : ''
+                      }`
+                    : 'Gmail'}
                 </button>
               }
               <button onClick={handleConfig}>Config</button>
               <button onClick={handleQuit}>Quit</button>
             </div>
-          ) : (
-            <p className="status-text">Configure account.</p>
-          )}
+          }
         </div>
       )}
     </div>

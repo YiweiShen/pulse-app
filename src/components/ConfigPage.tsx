@@ -40,7 +40,7 @@ const ConfigPage: React.FC<ConfigPageProps> = ({
         <input
           type="password"
           id="password"
-          placeholder="Password"
+          placeholder={username ? '••••••••••••••••••' : 'Password'}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
