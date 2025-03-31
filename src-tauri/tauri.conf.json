@@ -16,7 +16,7 @@
         "resizable": false,
         "title": "Pulse",
         "width": 200,
-        "height": 150,
+        "height": 200,
         "decorations": false,
         "transparent": true,
         "visible": false
