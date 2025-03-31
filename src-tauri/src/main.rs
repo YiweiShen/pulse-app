@@ -22,6 +22,8 @@ fn main() {
             command::init_menubar_panel,
             command::show_menubar_panel,
             command::exit_app,
+            command::change_icon_unread,
+            command::change_icon_no_mail
         ])
         .plugin(tauri_nspanel::init())
         .setup(setup_app)
