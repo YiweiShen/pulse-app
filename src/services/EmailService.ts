@@ -1,5 +1,6 @@
 // src/services/EmailService.ts
 import { fetch as tauriFetch } from '@tauri-apps/plugin-http'
+import { invoke } from '@tauri-apps/api/core'
 import { Buffer } from 'buffer'
 
 export class EmailService {
@@ -33,6 +34,12 @@ export class EmailService {
       const responseBody = await response.text() // Use response.text() to get the body as a string
       const emailCount = this.parseEmailCount(responseBody)
       console.log('Fetched new email count:', emailCount)
+
+      if (emailCount > 0) {
+        invoke('change_icon_unread')
+      } else {
+        invoke('change_icon_no_mail')
+      }
       return emailCount
     } catch (error) {
       console.error('Error fetching or parsing email feed:', error)
