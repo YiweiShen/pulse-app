@@ -16,6 +16,7 @@ use tauri::{App, AppHandle};
 /// Main entry point of the Tauri application.
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_http::init())
         .invoke_handler(tauri::generate_handler![
             command::init_menubar_panel,
