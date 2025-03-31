@@ -1,0 +1,56 @@
+/* src/components/ConfigPage.css */
+.config-page {
+  display: flex;
+  flex-direction: column;
+  height: 130px;
+}
+
+.config-page h2 {
+  margin-top: 0;
+  margin-bottom: 5px;
+  text-align: center;
+  color: #333;
+}
+
+.config-page .input-group {
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 5px;
+  width: 165px;
+}
+
+.config-page .input-group label {
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+.config-page .input-group input {
+  padding: 7px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1em;
+}
+
+.config-page .button-group {
+  display: flex;
+  gap: 5px;
+  margin-top: 5px;
+  justify-content: center;
+}
+
+.config-page .button-group button {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  font-size: 1em;
+  width: 80px;
+  transition: background-color 0.3s ease;
+}
+
+.config-page .button-group button:hover {
+  background-color: #eee;
+}
