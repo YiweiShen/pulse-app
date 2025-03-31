@@ -19,7 +19,8 @@
         "height": 200,
         "decorations": false,
         "transparent": true,
-        "visible": false
+        "visible": false,
+        "backgroundThrottling": "disabled"
       }
     ],
     "security": {

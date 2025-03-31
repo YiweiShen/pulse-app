@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { invoke } from '@tauri-apps/api/core'
 import { openUrl } from '@tauri-apps/plugin-opener'
+import { clearInterval, setInterval } from 'worker-timers'
 
 import './App.css'
 import ConfigPage from './components/ConfigPage'
