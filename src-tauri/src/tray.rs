@@ -49,17 +49,22 @@ fn handle_tray_click(app_handle: &AppHandle, event: TrayIconEvent) {
 /// # Returns
 ///
 /// A `tauri::Result` containing the created `TrayIcon` on success, or an error if icon loading or tray icon creation fails.
-pub fn create(app_handle: &AppHandle) -> tauri::Result<TrayIcon> {
+fn create_tray_icon(
+    app_handle: &AppHandle,
+    id: &str,
+    icon_bytes: &'static [u8],
+) -> tauri::Result<TrayIcon> {
     // Load the tray icon image from the specified bytes.
-    let tray_icon_image = Image::from_bytes(include_bytes!("../icons/status_no_mail.png"))?;
-
+    let tray_icon_image = Image::from_bytes(icon_bytes)?;
+    app_handle.remove_tray_by_id("tray");
+    app_handle.remove_tray_by_id("tray_unread");
     // Build the tray icon with the specified ID and icon.
-    let tray_icon = TrayIconBuilder::with_id("tray")
+    let tray_icon = TrayIconBuilder::with_id(id)
         .icon(tray_icon_image)
         .icon_as_template(true) // Indicate that the icon should be treated as a template (for macOS light/dark mode).
         .on_tray_icon_event(move |tray, event| {
             // Get a clone of the application handle for use within the closure.
-            let app_handle = tray.app_handle();
+            let app_handle = tray.app_handle().clone();
 
             // Handle tray icon click events using the dedicated function.
             handle_tray_click(&app_handle, event);
@@ -67,4 +72,20 @@ pub fn create(app_handle: &AppHandle) -> tauri::Result<TrayIcon> {
         .build(app_handle)?; // Build the tray icon and handle potential errors.
 
     Ok(tray_icon)
+}
+
+pub fn create(app_handle: &AppHandle) -> tauri::Result<TrayIcon> {
+    create_tray_icon(
+        app_handle,
+        "tray",
+        include_bytes!("../icons/status_no_mail.png"),
+    )
+}
+
+pub fn create_unread(app_handle: &AppHandle) -> tauri::Result<TrayIcon> {
+    create_tray_icon(
+        app_handle,
+        "tray_unread",
+        include_bytes!("../icons/status_unread.png"),
+    )
 }
