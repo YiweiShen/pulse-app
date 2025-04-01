@@ -12,9 +12,16 @@ mod workspace_listener;
 
 use std::error::Error;
 use tauri::{App, AppHandle};
+use tauri_plugin_autostart::MacosLauncher;
+
 /// Main entry point of the Tauri application.
 fn main() {
     tauri::Builder::default()
+        // https://v2.tauri.app/plugin/autostart/
+        .plugin(tauri_plugin_autostart::init(
+            MacosLauncher::LaunchAgent,
+            Some(vec!["--flag1", "--flag2"]),
+        ))
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_http::init())

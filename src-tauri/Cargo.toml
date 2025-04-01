@@ -30,3 +30,6 @@ rust-argon2 = "2.1.0"
 
 [features]
 cargo-clippy = []
+
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-autostart = "2"
