@@ -2,8 +2,11 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
   "description": "Capability for the main window",
-  "windows": ["main"],
+  "windows": [
+    "main"
+  ],
   "permissions": [
+    "core:path:default",
     "core:event:default",
     "core:window:default",
     "core:app:default",
@@ -14,8 +17,11 @@
     "http:default",
     {
       "identifier": "http:default",
-      "allow": ["https://mail.google.com"]
+      "allow": [
+        "https://mail.google.com"
+      ]
     },
-    "opener:default"
+    "opener:default",
+    "store:default"
   ]
 }
