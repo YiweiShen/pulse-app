@@ -1,33 +1,73 @@
-import { useState, useEffect } from 'react'
-
-// TODO: use a secure storage mechanism
-let storedUsername: string | null = localStorage.getItem('app_username')
-let storedPassword: string | null = localStorage.getItem('app_password')
+import { useState, useEffect, useCallback } from 'react'
+import useStrongholdInit from './useStrongholdInit'
+import {
+  insertRecord,
+  getRecord,
+  removeRecord
+} from '../utils/strongholdHelpers'
 
 export const useAppConfig = () => {
-  const [username, setUsername] = useState<string | null>(storedUsername)
-  const [password, setPassword] = useState<string | null>(storedPassword)
+  const { client, isReady, stronghold } = useStrongholdInit()
+  const [username, setUsername] = useState<string | null>(null)
+  const [password, setPassword] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  const loadConfig = useCallback(async () => {
+    if (isReady && client) {
+      const store = client.getStore()
+      const storedUsername = await getRecord(store, 'app_username')
+      const storedPassword = await getRecord(store, 'app_password')
+      setUsername(storedUsername)
+      setPassword(storedPassword)
+      setIsLoading(false)
+    }
+  }, [isReady, client])
 
   useEffect(() => {
-    if (username !== null) {
-      localStorage.setItem('app_username', username)
-      storedUsername = username
-    } else {
-      localStorage.removeItem('app_username')
-      storedUsername = null
-    }
-  }, [username])
+    loadConfig()
+  }, [loadConfig])
 
-  const updatePassword = (newPassword: string | null) => {
+  const saveConfig = useCallback(async () => {
+    if (stronghold) {
+      await stronghold.save()
+    }
+  }, [stronghold])
+
+  // Update username in Stronghold
+  useEffect(() => {
+    if (isReady && client && !isLoading) {
+      const updateUsernameInStronghold = async () => {
+        const store = client.getStore()
+        if (username !== null) {
+          await insertRecord(store, 'app_username', username)
+        } else {
+          await removeRecord(store, 'app_username')
+        }
+        await saveConfig()
+      }
+      updateUsernameInStronghold()
+    }
+  }, [username, isReady, client, isLoading, saveConfig])
+
+  const updatePassword = useCallback((newPassword: string | null) => {
     setPassword(newPassword)
-    if (newPassword !== null) {
-      localStorage.setItem('app_password', newPassword)
-      storedPassword = newPassword
-    } else {
-      localStorage.removeItem('app_password')
-      storedPassword = null
-    }
-  }
+  }, [])
 
-  return { username, setUsername, password, updatePassword }
+  // Update password in Stronghold
+  useEffect(() => {
+    if (isReady && client && !isLoading) {
+      const updatePasswordInStronghold = async () => {
+        const store = client.getStore()
+        if (password !== null) {
+          await insertRecord(store, 'app_password', password)
+        } else {
+          await removeRecord(store, 'app_password')
+        }
+        await saveConfig()
+      }
+      updatePasswordInStronghold()
+    }
+  }, [password, isReady, client, isLoading, saveConfig])
+
+  return { username, setUsername, password, updatePassword, isLoading }
 }
