@@ -1,5 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react'
+// https://tauri.app/plugin/autostart/
 import { enable, isEnabled, disable } from '@tauri-apps/plugin-autostart'
+// https://tauri.app/plugin/store/
 import { load, Store } from '@tauri-apps/plugin-store'
 import './ConfigPage.css'
 

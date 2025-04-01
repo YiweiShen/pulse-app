@@ -8,9 +8,6 @@ import ConfigPage from './components/ConfigPage'
 import { useAppConfig } from './hooks/useAppConfig'
 import { EmailService } from './services/EmailService'
 
-// TODO: Use the store to save configurations other than credentials.
-// For example, feature: configuration if run at startup.
-// https://tauri.app/plugin/store/
 function App() {
   const [showConfig, setShowConfig] = useState(false)
   const { username, setUsername, password, updatePassword } = useAppConfig()
