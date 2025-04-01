@@ -76,6 +76,7 @@ function App() {
           onSaveConfig={handleSaveConfig}
           onClose={handleCloseConfig}
           initialUsername={username}
+          initialPassword={password}
         />
       ) : (
         <div className="main-content">

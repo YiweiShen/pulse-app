@@ -5,15 +5,17 @@ interface ConfigPageProps {
   onSaveConfig: (username: string, password: string) => void
   onClose: () => void
   initialUsername?: string | null
+  initialPassword?: string | null
 }
 
 const ConfigPage: React.FC<ConfigPageProps> = ({
   onSaveConfig,
   onClose,
-  initialUsername
+  initialUsername,
+  initialPassword
 }) => {
   const [username, setLocalUsername] = useState(initialUsername || '')
-  const [password, setPassword] = useState('')
+  const [password, setPassword] = useState(initialPassword || '')
 
   const handleSave = useCallback(() => {
     onSaveConfig(username, password)
@@ -40,7 +42,7 @@ const ConfigPage: React.FC<ConfigPageProps> = ({
         <input
           type="password"
           id="password"
-          placeholder={username ? '••••••••••••••••••' : 'Password'}
+          placeholder={password ? '•••••••••••••••' : 'Password'}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
