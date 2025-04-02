@@ -18,7 +18,7 @@ tauri = { version = "2.0.0", features = [
     "macos-private-api",
 ] }
 tauri-plugin-opener = "2"
-tauri-plugin-shell = "2.0.0-beta.7"
+tauri-plugin-shell = "2.2.1"
 tauri-nspanel = { git = "https://github.com/ahkohd/tauri-nspanel", branch = "v2" }
 monitor = { git = "https://github.com/ahkohd/tauri-toolkit", branch = "v2" }
 serde = { version = "1", features = ["derive"] }
