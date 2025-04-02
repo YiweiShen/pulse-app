@@ -16,7 +16,7 @@ const DEFAULT_AUTO_START = false
 
 import { EmailService } from '../services/EmailService'
 
-const CHECK_INTERVAL = 60000 // 1 min
+const CHECK_INTERVAL = 10000 // 10 seconds
 
 export const useAppConfig = () => {
   const [isConfigVisible, setIsConfigVisible] = useState(false)
@@ -49,13 +49,13 @@ export const useAppConfig = () => {
     if (isReady && client) {
       const store = client.getStore()
 
-      if (credentials.username !== null) {
+      if (credentials.username !== '') {
         await insertRecord(store, 'app_username', credentials.username)
       } else {
         await removeRecord(store, 'app_username')
       }
 
-      if (credentials.password !== null) {
+      if (credentials.password !== '') {
         await insertRecord(store, 'app_password', credentials.password)
       } else {
         await removeRecord(store, 'app_password')
@@ -103,11 +103,15 @@ export const useAppConfig = () => {
   }, [])
 
   const handleCredentialChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('before setCredentials', credentials)
+    console.log('handleCredentialChange', e.target.id, e.target.value)
     const { id, value } = e.target
     setCredentials((prevState) => ({
       ...prevState,
       [id]: value
     }))
+
+    console.log('after setCredentials', credentials)
   }
 
   const handleAutoStartChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,6 +122,10 @@ export const useAppConfig = () => {
   const emailService = new EmailService()
 
   const checkNewEmails = useCallback(async () => {
+    console.log('Checking for new emails...')
+
+    console.log(credentials)
+
     if (!credentials.username || !credentials.password) {
       console.warn('Username or password not configured.')
       setEmailCount(0)
@@ -131,15 +139,16 @@ export const useAppConfig = () => {
       console.error('Error checking new emails:', error)
       setEmailCount(0)
     }
-  }, [])
+  }, [credentials])
 
   useEffect(() => {
     if (credentials.username && credentials.password) {
       checkNewEmails()
       const intervalId = setInterval(checkNewEmails, CHECK_INTERVAL)
+      console.log('Email check interval set:', intervalId)
       return () => clearInterval(intervalId)
     }
-  }, [credentials, checkNewEmails])
+  }, [credentials])
 
   const handleSave = () => {
     saveCredentials()
