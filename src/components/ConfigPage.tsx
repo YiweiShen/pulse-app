@@ -2,18 +2,27 @@ import React from 'react'
 // https://tauri.app/plugin/autostart/
 
 import './ConfigPage.css'
-import { useAppConfig } from '../hooks/useAppConfig'
 
-const ConfigPage: React.FC = () => {
-  const {
-    credentials,
-    autoStart,
-    handleCredentialChange,
-    handleAutoStartChange,
-    handleSave,
-    handleCancel
-  } = useAppConfig()
+interface ConfigPageProps {
+  credentials: {
+    username: string
+    password: string
+  }
+  autoStart: boolean
+  handleCredentialChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  handleAutoStartChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  handleSave: () => void
+  handleCancel: () => void
+}
 
+const ConfigPage: React.FC<ConfigPageProps> = ({
+  credentials,
+  autoStart,
+  handleCredentialChange,
+  handleAutoStartChange,
+  handleSave,
+  handleCancel
+}) => {
   return (
     <div className="config-page">
       <div className="input-group">
