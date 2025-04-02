@@ -9,30 +9,50 @@ import {
   getRecord,
   removeRecord
 } from '../utils/strongholdHelpers'
+import { EmailService } from '../services/EmailService'
 
+// Constants
 const CONFIG_STORE_FILE = 'config.json'
 const AUTO_START_KEY = 'autoStart'
 const DEFAULT_AUTO_START = false
-
-import { EmailService } from '../services/EmailService'
-
 const CHECK_INTERVAL = 10000 // 10 seconds
 
+// Type Definitions
+interface Credentials {
+  username: string
+  password: string
+}
+
 export const useAppConfig = () => {
+  // State variables
   const [isConfigVisible, setIsConfigVisible] = useState(false)
-  const [credentials, setCredentials] = useState({ username: '', password: '' })
-  const [autoStart, setAutoStart] = useState(false)
+  const [credentials, setCredentials] = useState<Credentials>({
+    username: '',
+    password: ''
+  })
+  const [autoStart, setAutoStart] = useState(DEFAULT_AUTO_START)
   const [emailCount, setEmailCount] = useState(0)
 
-  const toggleConfigVisibility = () => {
-    console.log('Toggling config visibility')
-    setIsConfigVisible(!isConfigVisible)
-    console.log('Config visibility:', isConfigVisible)
-  }
+  // Store instance (lazy initialization)
+  const getStore = useCallback(async () => {
+    return await load(CONFIG_STORE_FILE)
+  }, [])
 
-  // load credentials from stronghold
-  const loadCredentials = async () => {
-    const { client, isReady } = await strongholdInit()
+  // Stronghold client instance (lazy initialization)
+  const getStrongholdClient = useCallback(async () => {
+    return await strongholdInit()
+  }, [])
+
+  // Toggle config visibility
+  const toggleConfigVisibility = useCallback(() => {
+    console.log('Toggling config visibility')
+    setIsConfigVisible((prev) => !prev)
+    console.log('Config visibility:', !isConfigVisible)
+  }, [isConfigVisible])
+
+  // Load credentials from stronghold
+  const loadCredentials = useCallback(async () => {
+    const { client, isReady } = await getStrongholdClient()
     if (isReady && client) {
       const store = client.getStore()
       const storedUsername = await getRecord(store, 'app_username')
@@ -42,10 +62,11 @@ export const useAppConfig = () => {
         password: storedPassword || ''
       })
     }
-  }
-  // save credentials to stronghold
-  const saveCredentials = async () => {
-    const { client, isReady, stronghold } = await strongholdInit()
+  }, [getStrongholdClient])
+
+  // Save credentials to stronghold
+  const saveCredentials = useCallback(async () => {
+    const { client, isReady, stronghold } = await getStrongholdClient()
     if (isReady && client) {
       const store = client.getStore()
 
@@ -65,67 +86,73 @@ export const useAppConfig = () => {
         await stronghold.save()
       }
     }
-  }
+  }, [credentials, getStrongholdClient])
 
-  // load autoStart from store
-  const loadAutoStart = async () => {
+  // Load autoStart from store
+  const loadAutoStart = useCallback(async () => {
     try {
-      const s = await load(CONFIG_STORE_FILE)
-      const storedAutoStart = await s.get<boolean>(AUTO_START_KEY)
+      const store = await getStore()
+      const storedAutoStart = await store.get<boolean>(AUTO_START_KEY)
       setAutoStart(storedAutoStart ?? DEFAULT_AUTO_START)
     } catch (error) {
       console.error('Failed to load autoStart:', error)
     }
-  }
+  }, [getStore])
 
-  // save autoStart to store
-  const saveAutoStart = async () => {
+  // Save autoStart to store and update system setting
+  const saveAutoStart = useCallback(async () => {
     try {
-      const s = await load(CONFIG_STORE_FILE)
-      await s.set(AUTO_START_KEY, autoStart)
-      await s.save()
+      const store = await getStore()
+      await store.set(AUTO_START_KEY, autoStart)
+      await store.save()
 
-      if (autoStart) {
+      const isCurrentlyEnabled = await isEnabled()
+      if (autoStart && !isCurrentlyEnabled) {
         await enable()
         console.log(`Autostart enabled: ${await isEnabled()}`)
-      } else {
+      } else if (!autoStart && isCurrentlyEnabled) {
         await disable()
         console.log(`Autostart disabled: ${await isEnabled()}`)
+      } else {
+        console.log(`Autostart setting is already as requested: ${autoStart}`)
       }
     } catch (error) {
       console.error('Failed to save autoStart:', error)
     }
-  }
+  }, [autoStart, getStore])
 
+  // Load initial configuration on component mount
   useEffect(() => {
     loadCredentials()
     loadAutoStart()
-  }, [])
+  }, [loadCredentials, loadAutoStart])
 
-  const handleCredentialChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('before setCredentials', credentials)
-    console.log('handleCredentialChange', e.target.id, e.target.value)
-    const { id, value } = e.target
-    setCredentials((prevState) => ({
-      ...prevState,
-      [id]: value
-    }))
+  // Handle credential input changes
+  const handleCredentialChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { id, value } = e.target
+      setCredentials((prevCredentials) => ({
+        ...prevCredentials,
+        [id]: value
+      }))
+    },
+    []
+  )
 
-    console.log('after setCredentials', credentials)
-  }
+  // Handle autoStart checkbox change
+  const handleAutoStartChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setAutoStart(e.target.checked)
+    },
+    []
+  )
 
-  const handleAutoStartChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { checked } = e.target
-    setAutoStart(checked)
-  }
-
+  // Initialize EmailService
   const emailService = new EmailService()
 
+  // Check for new emails
   const checkNewEmails = useCallback(async () => {
     console.log('Checking for new emails...')
-
-    console.log(credentials)
-
     if (!credentials.username || !credentials.password) {
       console.warn('Username or password not configured.')
       setEmailCount(0)
@@ -139,26 +166,36 @@ export const useAppConfig = () => {
       console.error('Error checking new emails:', error)
       setEmailCount(0)
     }
-  }, [credentials])
+  }, [credentials, emailService])
 
+  // Set up interval for checking new emails
   useEffect(() => {
+    let intervalId: number | null = null
     if (credentials.username && credentials.password) {
       checkNewEmails()
-      const intervalId = setInterval(checkNewEmails, CHECK_INTERVAL)
+      let intervalId = setInterval(checkNewEmails, CHECK_INTERVAL)
       console.log('Email check interval set:', intervalId)
-      return () => clearInterval(intervalId)
     }
-  }, [credentials])
 
-  const handleSave = () => {
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId)
+        console.log('Email check interval cleared:', intervalId)
+      }
+    }
+  }, [credentials, checkNewEmails])
+
+  // Handle save button click
+  const handleSave = useCallback(() => {
     saveCredentials()
     saveAutoStart()
     toggleConfigVisibility()
-  }
+  }, [saveCredentials, saveAutoStart, toggleConfigVisibility])
 
-  const handleCancel = () => {
+  // Handle cancel button click
+  const handleCancel = useCallback(() => {
     toggleConfigVisibility()
-  }
+  }, [toggleConfigVisibility])
 
   return {
     isConfigVisible,
