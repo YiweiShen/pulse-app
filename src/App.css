@@ -15,39 +15,3 @@
   align-items: center;
   min-height: 50vh;
 }
-
-.main-content {
-  padding: 25px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  text-align: center;
-}
-
-.status-text {
-  margin-bottom: 15px;
-  font-size: 1.1em;
-  color: #333;
-}
-
-.button-container {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 120px;
-}
-
-.button-container button {
-  padding: 10px 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  cursor: pointer;
-  font-size: 1em;
-  transition: background-color 0.3s ease;
-}
-
-.button-container button:hover {
-  background-color: #eee;
-}
