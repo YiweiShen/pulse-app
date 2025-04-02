@@ -1,108 +1,18 @@
-import React, { useState, useCallback, useEffect } from 'react'
+import React from 'react'
 // https://tauri.app/plugin/autostart/
-import { enable, isEnabled, disable } from '@tauri-apps/plugin-autostart'
-// https://tauri.app/plugin/store/
-import { load, Store } from '@tauri-apps/plugin-store'
+
 import './ConfigPage.css'
+import { useAppConfig } from '../hooks/useAppConfig'
 
-interface ConfigPageProps {
-  onSaveConfig: (username: string, password: string, autoStart: boolean) => void
-  onClose: () => void
-  initialUsername?: string | null
-  initialPassword?: string | null
-  initialAutoStart?: boolean
-}
-
-const CONFIG_STORE_FILE = 'config.json'
-const AUTO_START_KEY = 'autoStart'
-const DEFAULT_AUTO_START = false
-
-const ConfigPage: React.FC<ConfigPageProps> = ({
-  onSaveConfig,
-  onClose,
-  initialUsername = '',
-  initialPassword = '',
-  initialAutoStart = false
-}) => {
-  const [username, setUsername] = useState(initialUsername || '')
-  const [password, setPassword] = useState(initialPassword || '')
-  const [autoStart, setAutoStart] = useState(
-    initialAutoStart !== undefined ? initialAutoStart : DEFAULT_AUTO_START
-  )
-  const [store, setStore] = useState<Store | null>(null)
-
-  // Initialize the store and load initial autoStart setting
-  useEffect(() => {
-    const initializeStore = async () => {
-      try {
-        const s = await load(CONFIG_STORE_FILE)
-        setStore(s)
-        const storedAutoStart = await s.get<boolean>(AUTO_START_KEY)
-        setAutoStart(
-          storedAutoStart !== undefined
-            ? storedAutoStart
-            : initialAutoStart ?? DEFAULT_AUTO_START
-        )
-      } catch (error) {
-        console.error('Failed to load or initialize store:', error)
-        // Consider setting a default store or handling the error more gracefully
-      }
-    }
-
-    initializeStore()
-  }, [initialAutoStart])
-
-  const handleAutoStartChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setAutoStart(event.target.checked)
-    },
-    []
-  )
-
-  const handleSave = useCallback(async () => {
-    try {
-      if (store) {
-        await store.set(AUTO_START_KEY, autoStart)
-        await store.save()
-      }
-      onSaveConfig(username, password, autoStart)
-    } catch (error) {
-      console.error('Failed to save config:', error)
-      // Optionally provide user feedback
-    }
-  }, [onSaveConfig, username, password, autoStart, store])
-
-  const handleCancel = useCallback(() => {
-    onClose()
-  }, [onClose])
-
-  // Manage autostart based on the autoStart state
-  useEffect(() => {
-    const manageAutoStart = async () => {
-      try {
-        if (autoStart) {
-          await enable()
-          console.log(`Autostart enabled: ${await isEnabled()}`)
-        } else {
-          await disable()
-          console.log(`Autostart disabled: ${await isEnabled()}`)
-        }
-      } catch (error) {
-        console.error(
-          `Failed to ${autoStart ? 'enable' : 'disable'} autostart:`,
-          error
-        )
-        // Revert the toggle if enabling/disabling fails and update the store
-        setAutoStart(!autoStart)
-        if (store) {
-          await store.set(AUTO_START_KEY, !autoStart)
-          await store.save()
-        }
-      }
-    }
-
-    manageAutoStart()
-  }, [autoStart, store])
+const ConfigPage: React.FC = () => {
+  const {
+    credentials,
+    autoStart,
+    handleCredentialChange,
+    handleAutoStartChange,
+    handleSave,
+    handleCancel
+  } = useAppConfig()
 
   return (
     <div className="config-page">
@@ -112,8 +22,8 @@ const ConfigPage: React.FC<ConfigPageProps> = ({
           type="text"
           id="username"
           placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={credentials.username}
+          onChange={handleCredentialChange}
         />
       </div>
       <div className="input-group">
@@ -121,9 +31,9 @@ const ConfigPage: React.FC<ConfigPageProps> = ({
         <input
           type="password"
           id="password"
-          placeholder={password ? '•••••••••••••••' : 'Password'}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          placeholder={credentials.password ? '•••••••••••••••' : 'Password'}
+          value={credentials.password}
+          onChange={handleCredentialChange}
         />
       </div>
       <div className="input-group">
