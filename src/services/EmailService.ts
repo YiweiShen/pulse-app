@@ -1,4 +1,3 @@
-// src/services/EmailService.ts
 import { fetch as tauriFetch } from '@tauri-apps/plugin-http'
 import { invoke } from '@tauri-apps/api/core'
 import { Buffer } from 'buffer'
@@ -6,13 +5,13 @@ import { Buffer } from 'buffer'
 export class EmailService {
   private readonly feedUrl = 'https://mail.google.com/mail/feed/atom'
 
-  async fetchNewEmailCount(
-    username: string,
+  async fetchNewEmailCount(credentials: {
+    username: string
     password: string
-  ): Promise<number> {
+  }): Promise<number> {
     try {
       const authorizationHeader = `Basic ${Buffer.from(
-        `${username}:${password}`
+        `${credentials.username}:${credentials.password}`
       ).toString('base64')}`
 
       const response = await tauriFetch(this.feedUrl, {
