@@ -103,10 +103,10 @@ export const useAppConfig = () => {
   }, [])
 
   const handleCredentialChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
+    const { id, value } = e.target
     setCredentials((prevState) => ({
       ...prevState,
-      [name]: value
+      [id]: value
     }))
   }
 
