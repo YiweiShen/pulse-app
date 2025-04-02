@@ -1,12 +1,19 @@
 import { invoke } from '@tauri-apps/api/core'
 import { openUrl } from '@tauri-apps/plugin-opener'
 
-import { useAppConfig } from '../hooks/useAppConfig'
+import './LandingPage.css'
 
 const GMAIL_INBOX_URL = 'https://mail.google.com/'
 
-const LandingPage: React.FC = () => {
-  const { toggleConfigVisibility, emailCount } = useAppConfig()
+interface LandingPageProps {
+  toggleConfigVisibility: () => void
+  emailCount: number
+}
+
+const LandingPage: React.FC<LandingPageProps> = ({
+  toggleConfigVisibility,
+  emailCount
+}) => {
   const openGmailInbox = async () => {
     await openUrl(GMAIL_INBOX_URL)
   }
