@@ -66,6 +66,13 @@ export const useAppConfig = () => {
 
   // Save credentials to stronghold
   const saveCredentials = useCallback(async () => {
+    console.log('Saving credentials:', credentials)
+    const isCredentialsValid = checkNewEmails()
+
+    if (!isCredentialsValid) {
+      console.warn('Invalid credentials, not saving.')
+      return
+    }
     const { client, isReady, stronghold } = await getStrongholdClient()
     if (isReady && client) {
       const store = client.getStore()
@@ -156,15 +163,17 @@ export const useAppConfig = () => {
     if (!credentials.username || !credentials.password) {
       console.warn('Username or password not configured.')
       setEmailCount(0)
-      return
+      return false
     }
 
     try {
       const count = await emailService.fetchNewEmailCount(credentials)
       setEmailCount(count)
+      return true
     } catch (error) {
       console.error('Error checking new emails:', error)
       setEmailCount(0)
+      return false
     }
   }, [credentials, emailService])
 
@@ -172,7 +181,6 @@ export const useAppConfig = () => {
   useEffect(() => {
     let intervalId: number | null = null
     if (credentials.username && credentials.password) {
-      checkNewEmails()
       let intervalId = setInterval(checkNewEmails, CHECK_INTERVAL)
       console.log('Email check interval set:', intervalId)
     }
