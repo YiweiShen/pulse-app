@@ -52,7 +52,7 @@ export const useAppConfig = () => {
   }, [isConfigVisible])
 
   // Load credentials from stronghold
-  const loadCredentials = useCallback(async () => {
+  const loadCredentials = async () => {
     const { client, isReady } = await getStrongholdClient()
     if (isReady && client) {
       const store = client.getStore()
@@ -63,11 +63,13 @@ export const useAppConfig = () => {
         password: storedPassword || ''
       })
 
-      if (storedUsername != '' && storedPassword != '') {
+      console.log('Credentials loaded: ', credentials)
+
+      if (credentials.password != '' && credentials.username != '') {
         setupEmailCheckInterval()
       }
     }
-  }, [getStrongholdClient])
+  }
 
   // Save credentials to stronghold
   const saveCredentials = useCallback(async () => {
@@ -166,7 +168,7 @@ export const useAppConfig = () => {
   const emailService = new EmailService()
 
   // Check for new emails
-  const checkNewEmails = useCallback(async () => {
+  const checkNewEmails = async () => {
     console.log('Checking for new emails...')
     if (!credentials.username || !credentials.password) {
       console.warn('Username or password not configured.')
@@ -183,7 +185,7 @@ export const useAppConfig = () => {
       setEmailCount(0)
       return false
     }
-  }, [credentials, emailService])
+  }
 
   // Set up interval for checking new emails
   const setupEmailCheckInterval = () => {
