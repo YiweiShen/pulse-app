@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 // https://tauri.app/plugin/store/
 import { load } from '@tauri-apps/plugin-store'
 import { clearInterval, setInterval } from 'worker-timers'
@@ -32,6 +32,7 @@ export const useAppConfig = () => {
   })
   const [autoStart, setAutoStart] = useState(DEFAULT_AUTO_START)
   const [emailCount, setEmailCount] = useState(0)
+  const intervalIdRef = useRef<number | null>(null)
 
   // Store instance (lazy initialization)
   const getStore = useCallback(async () => {
@@ -92,6 +93,19 @@ export const useAppConfig = () => {
       if (stronghold) {
         await stronghold.save()
       }
+
+      console.log('Credentials saved successfully.')
+
+      if (intervalIdRef.current) {
+        console.log('Clearing email check interval...')
+        clearInterval(intervalIdRef.current)
+        intervalIdRef.current = null
+        console.log('Email check interval cleared:', intervalIdRef.current)
+      }
+
+      console.log('Setting up email check interval...')
+      intervalIdRef.current = setInterval(checkNewEmails, CHECK_INTERVAL)
+      console.log('Email check interval set:', intervalIdRef.current)
     }
   }, [credentials, getStrongholdClient])
 
@@ -132,7 +146,7 @@ export const useAppConfig = () => {
   useEffect(() => {
     loadCredentials()
     loadAutoStart()
-  }, [loadCredentials, loadAutoStart])
+  }, [])
 
   // Handle credential input changes
   const handleCredentialChange = useCallback(
@@ -176,22 +190,6 @@ export const useAppConfig = () => {
       return false
     }
   }, [credentials, emailService])
-
-  // Set up interval for checking new emails
-  useEffect(() => {
-    let intervalId: number | null = null
-    if (credentials.username && credentials.password) {
-      let intervalId = setInterval(checkNewEmails, CHECK_INTERVAL)
-      console.log('Email check interval set:', intervalId)
-    }
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId)
-        console.log('Email check interval cleared:', intervalId)
-      }
-    }
-  }, [credentials, checkNewEmails])
 
   // Handle save button click
   const handleSave = useCallback(() => {
