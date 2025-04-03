@@ -62,6 +62,10 @@ export const useAppConfig = () => {
         username: storedUsername || '',
         password: storedPassword || ''
       })
+
+      if (storedUsername != '' && storedPassword != '') {
+        setupEmailCheckInterval()
+      }
     }
   }, [getStrongholdClient])
 
@@ -95,17 +99,7 @@ export const useAppConfig = () => {
       }
 
       console.log('Credentials saved successfully.')
-
-      if (intervalIdRef.current) {
-        console.log('Clearing email check interval...')
-        clearInterval(intervalIdRef.current)
-        intervalIdRef.current = null
-        console.log('Email check interval cleared:', intervalIdRef.current)
-      }
-
-      console.log('Setting up email check interval...')
-      intervalIdRef.current = setInterval(checkNewEmails, CHECK_INTERVAL)
-      console.log('Email check interval set:', intervalIdRef.current)
+      setupEmailCheckInterval()
     }
   }, [credentials, getStrongholdClient])
 
@@ -190,6 +184,20 @@ export const useAppConfig = () => {
       return false
     }
   }, [credentials, emailService])
+
+  // Set up interval for checking new emails
+  const setupEmailCheckInterval = () => {
+    if (intervalIdRef.current) {
+      console.log('Clearing email check interval...')
+      clearInterval(intervalIdRef.current)
+      intervalIdRef.current = null
+      console.log('Email check interval cleared:', intervalIdRef.current)
+    }
+
+    console.log('Setting up email check interval...')
+    intervalIdRef.current = setInterval(checkNewEmails, CHECK_INTERVAL)
+    console.log('Email check interval set:', intervalIdRef.current)
+  }
 
   // Handle save button click
   const handleSave = useCallback(() => {
