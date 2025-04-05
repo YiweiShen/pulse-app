@@ -76,5 +76,10 @@ fn setup_app(app: &mut App) -> Result<(), Box<dyn Error>> {
     // Initialize the system tray.
     tray::create(&app_handle)?;
 
+    // if let Some(window) = app_handle.get_webview_window("main") {
+    //     window.show().unwrap();
+    //     window.set_focus().unwrap();
+    // }
+
     Ok(())
 }
