@@ -18,7 +18,7 @@ brew install yiweishen/tap/pulse
 
 ### 🔐 Gmail Setup
 
-1. Go to Google Account - [App Passwords](https://myaccount.google.com/apppasswords).
+1. Go to Google Account - [App Passwords](https://myaccount.google.com/apppasswords) Recommended.
 2. Follow the prompts to generate a unique password.
 3. Sign in the Pulse app with your Google account name and the generated password.
 
