@@ -182,7 +182,7 @@ export const useAppConfig = () => {
     }
 
     try {
-      const count = await emailService.fetchNewEmailCount(credentials)
+      const count = await emailService.fetchNewEmailCount(loadedCredentials)
       setEmailCount(count)
       return true
     } catch (error) {
