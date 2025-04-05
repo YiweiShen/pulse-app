@@ -58,15 +58,20 @@ export const useAppConfig = () => {
       const store = client.getStore()
       const storedUsername = await getRecord(store, 'app_username')
       const storedPassword = await getRecord(store, 'app_password')
-      setCredentials({
+      const loadedCredentials = {
         username: storedUsername || '',
         password: storedPassword || ''
-      })
+      }
 
-      console.log('Credentials loaded: ', credentials)
+      console.log('Loaded credentials:', loadedCredentials)
 
-      if (credentials.password != '' && credentials.username != '') {
-        setupEmailCheckInterval()
+      setCredentials(loadedCredentials)
+
+      if (
+        loadedCredentials.password != '' &&
+        loadedCredentials.username != ''
+      ) {
+        setupEmailCheckInterval(loadedCredentials)
       }
     }
   }
@@ -74,7 +79,7 @@ export const useAppConfig = () => {
   // Save credentials to stronghold
   const saveCredentials = useCallback(async () => {
     console.log('Saving credentials:', credentials)
-    const isCredentialsValid = checkNewEmails()
+    const isCredentialsValid = checkNewEmails(credentials)
 
     if (!isCredentialsValid) {
       console.warn('Invalid credentials, not saving.')
@@ -101,7 +106,7 @@ export const useAppConfig = () => {
       }
 
       console.log('Credentials saved successfully.')
-      setupEmailCheckInterval()
+      setupEmailCheckInterval(credentials)
     }
   }, [credentials, getStrongholdClient])
 
@@ -168,9 +173,9 @@ export const useAppConfig = () => {
   const emailService = new EmailService()
 
   // Check for new emails
-  const checkNewEmails = async () => {
+  const checkNewEmails = async (loadedCredentials: Credentials) => {
     console.log('Checking for new emails...')
-    if (!credentials.username || !credentials.password) {
+    if (!loadedCredentials.username || !loadedCredentials.password) {
       console.warn('Username or password not configured.')
       setEmailCount(0)
       return false
@@ -188,7 +193,7 @@ export const useAppConfig = () => {
   }
 
   // Set up interval for checking new emails
-  const setupEmailCheckInterval = () => {
+  const setupEmailCheckInterval = (loadedCredentials: Credentials) => {
     if (intervalIdRef.current) {
       console.log('Clearing email check interval...')
       clearInterval(intervalIdRef.current)
@@ -197,7 +202,9 @@ export const useAppConfig = () => {
     }
 
     console.log('Setting up email check interval...')
-    intervalIdRef.current = setInterval(checkNewEmails, CHECK_INTERVAL)
+    intervalIdRef.current = setInterval(async () => {
+      await checkNewEmails(loadedCredentials)
+    }, CHECK_INTERVAL)
     console.log('Email check interval set:', intervalIdRef.current)
   }
 
