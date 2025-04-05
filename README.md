@@ -6,6 +6,12 @@
 
 # 📩 Pulse
 
+![GitHub Release](https://img.shields.io/github/v/release/YiweiShen/pulse-app)
+![GitHub Release Date](https://img.shields.io/github/release-date/YiweiShen/pulse-app)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/YiweiShen/pulse-app/tauri.yml)
+![GitHub top language](https://img.shields.io/github/languages/top/YiweiShen/pulse-app)
+![GitHub last commit](https://img.shields.io/github/last-commit/YiweiShen/pulse-app)
+
 A minimalist macOS menubar app for email notifications.
 
 ### 🍺 Install with Homebrew
