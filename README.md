@@ -61,27 +61,16 @@ codesign --force --deep --sign - /Applications/Pulse.app
 
 ### 📌 To Do
 
-- [ ] **Create a Homebrew Tap**
-      Add a Homebrew tap for easier installation and automatic updates on macOS.
-
-- [ ] **Replace `tauri_nspanel` with Native Window Menu**
-      Implement a native window menu using the [Tauri window menu feature](https://v2.tauri.app/learn/window-menu/).
-
-- [ ] **Make the App Multi-Platform**
-      Extend support to other operating systems, including Windows and Linux, for broader compatibility.
-
-- [ ] **Add Support for Additional Email Providers**
-      Integrate support for more email services such as Outlook, Yahoo, and others.
-
-- [ ] **Support Multiple Accounts**
-      Allow users to manage and switch between multiple accounts within the app.
-
-- [ ] **Custom Configuration Support**
-      Enable users to create and apply custom configurations for more flexibility.
+- Add a Homebrew tap for easier installation and automatic updates on macOS.
+- Implement a native window menu using the [Tauri window menu feature](https://v2.tauri.app/learn/window-menu/).
+- Extend support to other operating systems, including Windows and Linux, for broader compatibility.
+- Integrate support for more email services such as Outlook, Yahoo, and others.
+- Allow users to manage and switch between multiple accounts within the app.
+- Enable users to create and apply custom configurations for more flexibility.
 
 ### ⚠️ Warning: Work in Progress
 
-It's a weekend side project created to explore and learn **Rust** and **Tauri**, so please:
+It's a weekend side project created to explore and learn Rust and Tauri, so please:
 
 - Do **not** use it in production environments.
-- Expect **breaking changes** and rapid iterations.
+- Expect breaking changes and rapid iterations.
