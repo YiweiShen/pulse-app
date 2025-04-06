@@ -67,7 +67,6 @@ Learn more: https://support.google.com/accounts/answer/185833?hl=en
 
 ### 📌 To Do
 
-- Add a Homebrew tap for easier installation and automatic updates on macOS.
 - Implement a native window menu using the [Tauri window menu feature](https://v2.tauri.app/learn/window-menu/).
 - Extend support to other operating systems, including Windows and Linux, for broader compatibility.
 - Integrate support for more email services such as Outlook, Yahoo, and others.
