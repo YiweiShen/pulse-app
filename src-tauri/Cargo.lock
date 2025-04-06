@@ -2804,7 +2804,7 @@ dependencies = [
 [[package]]
 name = "monitor"
 version = "0.1.0"
-source = "git+https://github.com/ahkohd/tauri-toolkit?branch=v2#50e30512f42196df36926d5d9b61660cfdbe4ddd"
+source = "git+https://github.com/ahkohd/tauri-toolkit?branch=v2#882e6bc08b490267f303dc1910d2fa4ec25b1086"
 dependencies = [
  "cocoa",
  "core-foundation 0.10.0",
@@ -3664,7 +3664,7 @@ dependencies = [
 
 [[package]]
 name = "pulse"
-version = "0.1.13"
+version = "0.1.14"
 dependencies = [
  "monitor",
  "rust-argon2 2.1.0",
