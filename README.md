@@ -73,9 +73,9 @@ Learn more: https://support.google.com/accounts/answer/185833?hl=en
 - Allow users to manage and switch between multiple accounts within the app.
 - Enable users to create and apply custom configurations for more flexibility.
 
-### ⚠️ Warning: Work in Progress
+### ⚠️ Work in Progress
 
-It's a weekend side project created to explore and learn Rust and Tauri, so please:
+Pulse is an experimental weekend project built to explore Rust and Tauri. As such, it's not production-ready:
 
-- Do **not** use it in production environments.
-- Expect breaking changes and rapid iterations.
+- Use at your own risk.
+- Expect breaking changes and frequent updates.
