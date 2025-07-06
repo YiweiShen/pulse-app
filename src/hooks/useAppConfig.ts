@@ -63,7 +63,7 @@ export const useAppConfig = () => {
         password: storedPassword || ''
       }
 
-      console.log('Loaded credentials:', loadedCredentials)
+      console.log('Loaded credentials: [username only]', { username: loadedCredentials.username })
 
       setCredentials(loadedCredentials)
 
@@ -78,7 +78,7 @@ export const useAppConfig = () => {
 
   // Save credentials to stronghold
   const saveCredentials = useCallback(async () => {
-    console.log('Saving credentials:', credentials)
+    console.log('Saving credentials: [username only]', { username: credentials.username })
     const isCredentialsValid = checkNewEmails(credentials)
 
     if (!isCredentialsValid) {
