@@ -14,6 +14,8 @@
 
 A minimalist macOS menubar app for email notifications.
 
+![](./pulse-app.png)
+
 ### 🍺 Install with Homebrew
 
 Run the following command:
