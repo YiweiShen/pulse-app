@@ -1,229 +1,165 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-// https://tauri.app/plugin/store/
+import { invoke } from '@tauri-apps/api/core'
 import { load } from '@tauri-apps/plugin-store'
 import { clearInterval, setInterval } from 'worker-timers'
 import { enable, isEnabled, disable } from '@tauri-apps/plugin-autostart'
-import {
-  strongholdInit,
-  insertRecord,
-  getRecord,
-  removeRecord
-} from '../utils/strongholdHelpers'
-import { EmailService } from '../services/EmailService'
 
-// Constants
 const CONFIG_STORE_FILE = 'config.json'
 const AUTO_START_KEY = 'autoStart'
 const DEFAULT_AUTO_START = false
 const CHECK_INTERVAL = 10000 // 10 seconds
 
-// Type Definitions
-interface Credentials {
-  username: string
-  password: string
-}
+export type AuthStatus =
+  | 'checking'
+  | 'needs_client_id'
+  | 'needs_auth'
+  | 'connecting'
+  | 'authenticated'
 
 export const useAppConfig = () => {
-  // State variables
-  const [isConfigVisible, setIsConfigVisible] = useState(false)
-  const [credentials, setCredentials] = useState<Credentials>({
-    username: '',
-    password: ''
-  })
-  const [autoStart, setAutoStart] = useState(DEFAULT_AUTO_START)
   const [emailCount, setEmailCount] = useState(0)
+  const [emailError, setEmailError] = useState<string | null>(null)
+  const [autoStart, setAutoStart] = useState(DEFAULT_AUTO_START)
+  const [authStatus, setAuthStatus] = useState<AuthStatus>('checking')
   const intervalIdRef = useRef<number | null>(null)
-  const emailService = useRef(new EmailService())
 
   const getStore = () => load(CONFIG_STORE_FILE)
-  const getStrongholdClient = () => strongholdInit()
 
-  // Toggle config visibility
-  const toggleConfigVisibility = useCallback(() => {
-    setIsConfigVisible((prev) => !prev)
+  const checkAuthStatus = useCallback(async () => {
+    try {
+      const status = await invoke<{ has_client_id: boolean; has_client_secret: boolean; is_authenticated: boolean }>(
+        'get_gmail_auth_status'
+      )
+      if (!status.has_client_id || !status.has_client_secret) {
+        setAuthStatus('needs_client_id')
+      } else if (!status.is_authenticated) {
+        setAuthStatus('needs_auth')
+      } else {
+        setAuthStatus('authenticated')
+      }
+    } catch (error) {
+      console.error('Failed to get auth status:', error)
+      setAuthStatus('needs_client_id')
+    }
   }, [])
 
-  // Load credentials from stronghold
-  const loadCredentials = async () => {
-    const { client, isReady } = await getStrongholdClient()
-    if (isReady && client) {
-      const store = client.getStore()
-      const storedUsername = await getRecord(store, 'app_username')
-      const storedPassword = await getRecord(store, 'app_password')
-      const loadedCredentials = {
-        username: storedUsername || '',
-        password: storedPassword || ''
-      }
+  const saveClientId = useCallback(async (clientId: string) => {
+    await invoke('save_gmail_client_id', { clientId })
+  }, [])
 
-      console.log('Loaded credentials: [username only]', { username: loadedCredentials.username })
+  const saveClientSecret = useCallback(async (clientSecret: string) => {
+    await invoke('save_gmail_client_secret', { clientSecret })
+    setAuthStatus('needs_auth')
+  }, [])
 
-      setCredentials(loadedCredentials)
-
-      if (
-        loadedCredentials.password !== '' &&
-        loadedCredentials.username !== ''
-      ) {
-        setupEmailCheckInterval(loadedCredentials)
-      }
+  const connectGmail = useCallback(async () => {
+    setAuthStatus('connecting')
+    try {
+      await invoke('start_gmail_auth')
+      setAuthStatus('authenticated')
+    } catch (error) {
+      console.error('Gmail auth failed:', error)
+      setEmailError(String(error))
+      setAuthStatus('needs_auth')
     }
-  }
+  }, [])
 
-  // Save credentials to stronghold
-  const saveCredentials = useCallback(async () => {
-    console.log('Saving credentials: [username only]', { username: credentials.username })
-    const isCredentialsValid = await checkNewEmails(credentials)
-
-    if (!isCredentialsValid) {
-      console.warn('Invalid credentials, not saving.')
-      return
+  const disconnectGmail = useCallback(async () => {
+    try {
+      await invoke('gmail_sign_out')
+      setEmailCount(0)
+      setEmailError(null)
+      await invoke('change_icon_no_mail')
+      setAuthStatus('needs_auth')
+    } catch (error) {
+      console.error('Sign out failed:', error)
     }
-    const { client, isReady, stronghold } = await getStrongholdClient()
-    if (isReady && client) {
-      const store = client.getStore()
+  }, [])
 
-      if (credentials.username !== '') {
-        await insertRecord(store, 'app_username', credentials.username)
+  const checkNewEmails = useCallback(async () => {
+    try {
+      const count = await invoke<number>('fetch_gmail_unread_count')
+      setEmailCount(count)
+      setEmailError(null)
+      if (count > 0) {
+        invoke('change_icon_unread')
       } else {
-        await removeRecord(store, 'app_username')
+        invoke('change_icon_no_mail')
       }
-
-      if (credentials.password !== '') {
-        await insertRecord(store, 'app_password', credentials.password)
-      } else {
-        await removeRecord(store, 'app_password')
-      }
-
-      if (stronghold) {
-        await stronghold.save()
-      }
-
-      console.log('Credentials saved successfully.')
-      setupEmailCheckInterval(credentials)
+    } catch (error) {
+      console.error('Error checking emails:', error)
+      setEmailError(String(error))
+      setEmailCount(0)
+      invoke('change_icon_no_mail')
     }
-  }, [credentials])
+  }, [])
 
-  // Load autoStart from store
   const loadAutoStart = useCallback(async () => {
     try {
       const store = await getStore()
-      const storedAutoStart = await store.get<boolean>(AUTO_START_KEY)
-      setAutoStart(storedAutoStart ?? DEFAULT_AUTO_START)
+      const stored = await store.get<boolean>(AUTO_START_KEY)
+      setAutoStart(stored ?? DEFAULT_AUTO_START)
     } catch (error) {
       console.error('Failed to load autoStart:', error)
     }
   }, [])
 
-  // Save autoStart to store and update system setting
-  const saveAutoStart = useCallback(async () => {
+  const handleAutoStartChange = useCallback(async (checked: boolean) => {
+    setAutoStart(checked)
     try {
       const store = await getStore()
-      await store.set(AUTO_START_KEY, autoStart)
+      await store.set(AUTO_START_KEY, checked)
       await store.save()
 
       const isCurrentlyEnabled = await isEnabled()
-      if (autoStart && !isCurrentlyEnabled) {
+      if (checked && !isCurrentlyEnabled) {
         await enable()
-        console.log(`Autostart enabled: ${await isEnabled()}`)
-      } else if (!autoStart && isCurrentlyEnabled) {
+      } else if (!checked && isCurrentlyEnabled) {
         await disable()
-        console.log(`Autostart disabled: ${await isEnabled()}`)
-      } else {
-        console.log(`Autostart setting is already as requested: ${autoStart}`)
       }
     } catch (error) {
       console.error('Failed to save autoStart:', error)
     }
-  }, [autoStart])
+  }, [])
 
-  // Load initial configuration on component mount
+  // Start polling only when authenticated
   useEffect(() => {
-    loadCredentials()
-    loadAutoStart()
+    if (authStatus !== 'authenticated') {
+      if (intervalIdRef.current) {
+        clearInterval(intervalIdRef.current)
+        intervalIdRef.current = null
+      }
+      return
+    }
+
+    checkNewEmails()
+
+    intervalIdRef.current = setInterval(() => {
+      checkNewEmails()
+    }, CHECK_INTERVAL)
 
     return () => {
       if (intervalIdRef.current) {
         clearInterval(intervalIdRef.current)
+        intervalIdRef.current = null
       }
     }
+  }, [authStatus, checkNewEmails])
+
+  useEffect(() => {
+    loadAutoStart()
+    checkAuthStatus()
   }, [])
 
-  // Handle credential input changes
-  const handleCredentialChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { id, value } = e.target
-      setCredentials((prevCredentials) => ({
-        ...prevCredentials,
-        [id]: value
-      }))
-    },
-    []
-  )
-
-  // Handle autoStart checkbox change
-  const handleAutoStartChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setAutoStart(e.target.checked)
-    },
-    []
-  )
-
-  // Check for new emails
-  const checkNewEmails = async (loadedCredentials: Credentials) => {
-    console.log('Checking for new emails...')
-    if (!loadedCredentials.username || !loadedCredentials.password) {
-      console.warn('Username or password not configured.')
-      setEmailCount(0)
-      return false
-    }
-
-    try {
-      const count = await emailService.current.fetchNewEmailCount(loadedCredentials)
-      setEmailCount(count)
-      return true
-    } catch (error) {
-      console.error('Error checking new emails:', error)
-      setEmailCount(0)
-      return false
-    }
-  }
-
-  // Set up interval for checking new emails
-  const setupEmailCheckInterval = (loadedCredentials: Credentials) => {
-    if (intervalIdRef.current) {
-      console.log('Clearing email check interval...')
-      clearInterval(intervalIdRef.current)
-      intervalIdRef.current = null
-      console.log('Email check interval cleared:', intervalIdRef.current)
-    }
-
-    console.log('Setting up email check interval...')
-    intervalIdRef.current = setInterval(async () => {
-      await checkNewEmails(loadedCredentials)
-    }, CHECK_INTERVAL)
-    console.log('Email check interval set:', intervalIdRef.current)
-  }
-
-  // Handle save button click
-  const handleSave = useCallback(() => {
-    saveCredentials()
-    saveAutoStart()
-    toggleConfigVisibility()
-  }, [saveCredentials, saveAutoStart, toggleConfigVisibility])
-
-  // Handle cancel button click
-  const handleCancel = useCallback(() => {
-    toggleConfigVisibility()
-  }, [toggleConfigVisibility])
-
   return {
-    isConfigVisible,
-    toggleConfigVisibility,
     emailCount,
-    credentials,
+    emailError,
     autoStart,
-    handleCredentialChange,
+    authStatus,
     handleAutoStartChange,
-    handleSave,
-    handleCancel
+    saveClientId,
+    saveClientSecret,
+    connectGmail,
+    disconnectGmail,
   }
 }

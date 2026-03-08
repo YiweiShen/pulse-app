@@ -64,3 +64,73 @@
   flex: 1;
   justify-content: flex-end;
 }
+
+.status-dot.error {
+  background: #e5484d;
+}
+
+.error-text {
+  color: #e5484d !important;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+}
+
+.checkbox-row label {
+  font-size: 11px;
+  color: #666;
+  cursor: pointer;
+}
+
+.setup-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.setup-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111;
+  margin: 0;
+}
+
+.setup-desc {
+  font-size: 11px;
+  color: #666;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.setup-link {
+  color: #0070f3;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.setup-input {
+  font-size: 11px;
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  outline: none;
+  color: #111;
+  background: #fafafa;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.setup-input:focus {
+  border-color: #0070f3;
+  background: #fff;
+}
+
+.disconnect-link {
+  font-size: 10px !important;
+  color: #bbb !important;
+}

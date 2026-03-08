@@ -1,58 +1,40 @@
 import { useEffect } from 'react'
 import { invoke } from '@tauri-apps/api/core'
-import { getCurrentWindow, LogicalSize } from '@tauri-apps/api/window'
 
 import './App.css'
-import ConfigPage from './components/ConfigPage'
 import LandingPage from './components/LandingPage'
 import { useAppConfig } from './hooks/useAppConfig'
 
 function App() {
   const {
-    isConfigVisible,
-    toggleConfigVisibility,
     emailCount,
-    credentials,
+    emailError,
     autoStart,
-    handleCredentialChange,
+    authStatus,
     handleAutoStartChange,
-    handleSave,
-    handleCancel
+    saveClientId,
+    saveClientSecret,
+    connectGmail,
+    disconnectGmail,
   } = useAppConfig()
 
   useEffect(() => {
     invoke('init_menubar_panel')
   }, [])
 
-  useEffect(() => {
-    const win = getCurrentWindow()
-    const resize = async () => {
-      if (isConfigVisible) {
-        await win.setSize(new LogicalSize(200, 290))
-      } else {
-        await win.setSize(new LogicalSize(200, 200))
-      }
-    }
-    resize()
-  }, [isConfigVisible])
-
   return (
     <div className="container">
-      {isConfigVisible ? (
-        <ConfigPage
-          credentials={credentials}
-          autoStart={autoStart}
-          handleCredentialChange={handleCredentialChange}
-          handleAutoStartChange={handleAutoStartChange}
-          handleSave={handleSave}
-          handleCancel={handleCancel}
-        />
-      ) : (
-        <LandingPage
-          toggleConfigVisibility={toggleConfigVisibility}
-          emailCount={emailCount}
-        />
-      )}
+      <LandingPage
+        emailCount={emailCount}
+        emailError={emailError}
+        autoStart={autoStart}
+        authStatus={authStatus}
+        onAutoStartChange={handleAutoStartChange}
+        onSaveClientId={saveClientId}
+        onSaveClientSecret={saveClientSecret}
+        onConnectGmail={connectGmail}
+        onDisconnectGmail={disconnectGmail}
+      />
     </div>
   )
 }

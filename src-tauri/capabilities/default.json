@@ -11,13 +11,6 @@
     "core:resources:default",
     "core:menu:default",
     "core:tray:default",
-    "stronghold:default",
-    "stronghold:allow-remove-store-record",
-    "http:default",
-    {
-      "identifier": "http:default",
-      "allow": ["https://mail.google.com"]
-    },
     "opener:default",
     "store:default"
   ]
