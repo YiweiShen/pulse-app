@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { invoke } from '@tauri-apps/api/core'
+import { getCurrentWindow, LogicalSize } from '@tauri-apps/api/window'
 
 import './App.css'
 import ConfigPage from './components/ConfigPage'
@@ -22,6 +23,18 @@ function App() {
   useEffect(() => {
     invoke('init_menubar_panel')
   }, [])
+
+  useEffect(() => {
+    const win = getCurrentWindow()
+    const resize = async () => {
+      if (isConfigVisible) {
+        await win.setSize(new LogicalSize(200, 290))
+      } else {
+        await win.setSize(new LogicalSize(200, 200))
+      }
+    }
+    resize()
+  }, [isConfigVisible])
 
   return (
     <div className="container">

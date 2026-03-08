@@ -1,3 +1,4 @@
+#![allow(deprecated)]
 use tauri_nspanel::cocoa::base::id;
 use tauri_nspanel::objc::{class, msg_send, sel, sel_impl};
 

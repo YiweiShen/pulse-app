@@ -20,7 +20,7 @@ fn main() {
         // https://v2.tauri.app/plugin/autostart/
         .plugin(tauri_plugin_autostart::init(
             MacosLauncher::LaunchAgent,
-            Some(vec!["--flag1", "--flag2"]),
+            None,
         ))
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_opener::init())

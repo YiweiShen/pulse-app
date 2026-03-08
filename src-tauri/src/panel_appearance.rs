@@ -1,3 +1,4 @@
+#![allow(deprecated)]
 use tauri::{Manager, WebviewWindow};
 use tauri_nspanel::{
     cocoa::base::id,

@@ -1,3 +1,4 @@
+#![allow(deprecated)]
 use tauri::Manager;
 
 use tauri_nspanel::{

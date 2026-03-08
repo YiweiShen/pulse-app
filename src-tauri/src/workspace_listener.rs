@@ -1,5 +1,5 @@
+#![allow(deprecated)]
 use std::ffi::CString;
-
 use tauri_nspanel::{
     block::ConcreteBlock,
     cocoa::base::{id, nil},

@@ -3,8 +3,8 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { load } from '@tauri-apps/plugin-store'
 import { clearInterval, setInterval } from 'worker-timers'
 import { enable, isEnabled, disable } from '@tauri-apps/plugin-autostart'
-import { strongholdInit } from '../utils/strongholdHelpers'
 import {
+  strongholdInit,
   insertRecord,
   getRecord,
   removeRecord
@@ -33,23 +33,15 @@ export const useAppConfig = () => {
   const [autoStart, setAutoStart] = useState(DEFAULT_AUTO_START)
   const [emailCount, setEmailCount] = useState(0)
   const intervalIdRef = useRef<number | null>(null)
+  const emailService = useRef(new EmailService())
 
-  // Store instance (lazy initialization)
-  const getStore = useCallback(async () => {
-    return await load(CONFIG_STORE_FILE)
-  }, [])
-
-  // Stronghold client instance (lazy initialization)
-  const getStrongholdClient = useCallback(async () => {
-    return await strongholdInit()
-  }, [])
+  const getStore = () => load(CONFIG_STORE_FILE)
+  const getStrongholdClient = () => strongholdInit()
 
   // Toggle config visibility
   const toggleConfigVisibility = useCallback(() => {
-    console.log('Toggling config visibility')
     setIsConfigVisible((prev) => !prev)
-    console.log('Config visibility:', !isConfigVisible)
-  }, [isConfigVisible])
+  }, [])
 
   // Load credentials from stronghold
   const loadCredentials = async () => {
@@ -68,8 +60,8 @@ export const useAppConfig = () => {
       setCredentials(loadedCredentials)
 
       if (
-        loadedCredentials.password != '' &&
-        loadedCredentials.username != ''
+        loadedCredentials.password !== '' &&
+        loadedCredentials.username !== ''
       ) {
         setupEmailCheckInterval(loadedCredentials)
       }
@@ -79,7 +71,7 @@ export const useAppConfig = () => {
   // Save credentials to stronghold
   const saveCredentials = useCallback(async () => {
     console.log('Saving credentials: [username only]', { username: credentials.username })
-    const isCredentialsValid = checkNewEmails(credentials)
+    const isCredentialsValid = await checkNewEmails(credentials)
 
     if (!isCredentialsValid) {
       console.warn('Invalid credentials, not saving.')
@@ -108,7 +100,7 @@ export const useAppConfig = () => {
       console.log('Credentials saved successfully.')
       setupEmailCheckInterval(credentials)
     }
-  }, [credentials, getStrongholdClient])
+  }, [credentials])
 
   // Load autoStart from store
   const loadAutoStart = useCallback(async () => {
@@ -119,7 +111,7 @@ export const useAppConfig = () => {
     } catch (error) {
       console.error('Failed to load autoStart:', error)
     }
-  }, [getStore])
+  }, [])
 
   // Save autoStart to store and update system setting
   const saveAutoStart = useCallback(async () => {
@@ -141,12 +133,18 @@ export const useAppConfig = () => {
     } catch (error) {
       console.error('Failed to save autoStart:', error)
     }
-  }, [autoStart, getStore])
+  }, [autoStart])
 
   // Load initial configuration on component mount
   useEffect(() => {
     loadCredentials()
     loadAutoStart()
+
+    return () => {
+      if (intervalIdRef.current) {
+        clearInterval(intervalIdRef.current)
+      }
+    }
   }, [])
 
   // Handle credential input changes
@@ -169,9 +167,6 @@ export const useAppConfig = () => {
     []
   )
 
-  // Initialize EmailService
-  const emailService = new EmailService()
-
   // Check for new emails
   const checkNewEmails = async (loadedCredentials: Credentials) => {
     console.log('Checking for new emails...')
@@ -182,7 +177,7 @@ export const useAppConfig = () => {
     }
 
     try {
-      const count = await emailService.fetchNewEmailCount(loadedCredentials)
+      const count = await emailService.current.fetchNewEmailCount(loadedCredentials)
       setEmailCount(count)
       return true
     } catch (error) {

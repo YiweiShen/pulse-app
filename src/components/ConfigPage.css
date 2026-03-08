@@ -1,55 +1,85 @@
 .config-page {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  height: 130px;
+  padding: 14px 16px 32px;
+  gap: 7px;
 }
 
-.config-page h2 {
-  margin-top: 0;
-  margin-bottom: 5px;
-  text-align: center;
-  color: #333;
+.config-header {
+  margin-bottom: 0;
 }
 
-.config-page .input-group {
-  padding: 4px;
+.config-title {
+  font-size: 10px;
+  font-weight: 600;
+  color: #bbb;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.input-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 4px;
-  width: 165px;
+  gap: 4px;
 }
 
-.config-page .input-group label {
-  margin-bottom: 5px;
-  font-weight: bold;
-  color: #555;
+.input-group label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #888;
 }
 
-.config-page .input-group input {
-  padding: 3px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 1em;
+.input-group input {
+  width: 100%;
+  padding: 5px 9px;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: inherit;
+  color: #111;
+  outline: none;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
 }
 
-.config-page .button-group {
+.input-group input:focus {
+  border-color: #111;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+}
+
+.input-group input::placeholder {
+  color: #ccc;
+}
+
+.checkbox-group {
   display: flex;
-  gap: 2px;
-  margin-top: 2px;
-  justify-content: center;
+  align-items: center;
+  gap: 7px;
 }
 
-.config-page .button-group button {
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
+.checkbox-group input[type='checkbox'] {
+  width: 13px;
+  height: 13px;
+  accent-color: #111;
   cursor: pointer;
-  font-size: 1em;
-  width: 80px;
-  transition: background-color 0.3s ease;
+  flex-shrink: 0;
 }
 
-.config-page .button-group button:hover {
-  background-color: #eee;
+.checkbox-group label {
+  font-size: 12px;
+  color: #666;
+  cursor: pointer;
+  user-select: none;
+}
+
+.button-group {
+  display: flex;
+  gap: 6px;
+  margin-top: auto;
+  margin-bottom: 8px;
+}
+
+.button-group button {
+  flex: 1;
 }

@@ -1,5 +1,4 @@
 import React from 'react'
-// https://tauri.app/plugin/autostart/
 
 import './ConfigPage.css'
 
@@ -25,40 +24,51 @@ const ConfigPage: React.FC<ConfigPageProps> = ({
 }) => {
   return (
     <div className="config-page">
+      <div className="config-header">
+        <span className="config-title">Settings</span>
+      </div>
+
       <div className="input-group">
-        <label htmlFor="username">Username:</label>
+        <label htmlFor="username">Email</label>
         <input
           type="text"
           id="username"
-          placeholder="Username"
+          placeholder="you@gmail.com"
           value={credentials.username}
           onChange={handleCredentialChange}
+          autoComplete="off"
+          spellCheck={false}
         />
       </div>
+
       <div className="input-group">
-        <label htmlFor="password">Password:</label>
+        <label htmlFor="password">App password</label>
         <input
           type="password"
           id="password"
-          placeholder={credentials.password ? '•••••••••••••••' : 'Password'}
+          placeholder={credentials.password ? '••••••••••••••••' : 'xxxx xxxx xxxx xxxx'}
           value={credentials.password}
           onChange={handleCredentialChange}
         />
       </div>
-      <div className="input-group">
-        <label htmlFor="autoStart">
-          <input
-            type="checkbox"
-            id="autoStart"
-            checked={autoStart}
-            onChange={handleAutoStartChange}
-          />
-          Auto run on startup
-        </label>
+
+      <div className="checkbox-group">
+        <input
+          type="checkbox"
+          id="autoStart"
+          checked={autoStart}
+          onChange={handleAutoStartChange}
+        />
+        <label htmlFor="autoStart">Start on login</label>
       </div>
+
       <div className="button-group">
-        <button onClick={handleSave}>Save</button>
-        <button onClick={handleCancel}>Cancel</button>
+        <button className="btn-primary" onClick={handleSave}>
+          Save
+        </button>
+        <button className="btn-ghost" onClick={handleCancel}>
+          Cancel
+        </button>
       </div>
     </div>
   )

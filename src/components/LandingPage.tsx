@@ -1,3 +1,4 @@
+import React from 'react'
 import { invoke } from '@tauri-apps/api/core'
 import { openUrl } from '@tauri-apps/plugin-opener'
 
@@ -24,19 +25,35 @@ const LandingPage: React.FC<LandingPageProps> = ({
 
   return (
     <div className="main-content">
-      {
-        <div className="button-container">
-          {
-            <button onClick={openGmailInbox}>
-              {emailCount > 0
-                ? `${emailCount} New Email${emailCount > 1 ? 's' : ''}`
-                : 'Gmail'}
-            </button>
-          }
-          <button onClick={toggleConfigVisibility}>Config</button>
-          <button onClick={handleQuit}>Quit</button>
+      <div className="status-section">
+        <div className={`status-dot ${emailCount > 0 ? 'unread' : 'idle'}`} />
+        <div className="status-info">
+          {emailCount > 0 ? (
+            <>
+              <span className="email-count">{emailCount}</span>
+              <span className="email-label">
+                unread email{emailCount > 1 ? 's' : ''}
+              </span>
+            </>
+          ) : (
+            <span className="email-label">No new mail</span>
+          )}
         </div>
-      }
+      </div>
+
+      <div className="divider" />
+
+      <div className="button-container">
+        <button className="btn-primary" onClick={openGmailInbox}>
+          Open Gmail
+        </button>
+        <button className="btn-ghost" onClick={toggleConfigVisibility}>
+          Settings
+        </button>
+        <button className="btn-ghost btn-muted" onClick={handleQuit}>
+          Quit
+        </button>
+      </div>
     </div>
   )
 }

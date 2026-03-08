@@ -1,7 +1,7 @@
+#![allow(deprecated)]
 use tauri::{Emitter, Manager};
 use tauri_nspanel::{
     cocoa::appkit::{NSMainMenuWindowLevel, NSWindowCollectionBehavior},
-    objc::{class, msg_send, sel, sel_impl},
     panel_delegate, WebviewWindowExt,
 };
 
